@@ -1,8 +1,8 @@
-# Quantum Prisoner’s Dilemma 
+# ⚛️Quantum Prisoner’s Dilemma 
 
 This is a browser-based quantum game developed for **UTS Introduction to Quantum Computing**.
 
-##  Game Overview
+## 🎮 Game Overview
 
 Two players choose to **Cooperate** or **Defect**.  
 Their choices dynamically generate an **OpenQASM quantum circuit**, which is executed using either:
@@ -30,13 +30,13 @@ The game demonstrates how quantum operations (such as entanglement) can influenc
 
 ---
 
-##  Live Deployment
+## 🌐 Live Deployment
 
 https://quantum-prisoners-dilemma-ela4awpnhamip5yt6kpgrf.streamlit.app/
 
 ---
 
-##  How to Run Locally
+## ▶️ How to Run Locally
 
 ### 1. Install dependencies
 ```bash
