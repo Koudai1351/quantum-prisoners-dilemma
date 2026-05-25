@@ -252,16 +252,13 @@ if st.button("Run Quantum Game"):
 
     try:
         if backend == "Local Simulator":
-
-        bitstrings = run_local_quantum(qasm, shots)
-
+            bitstrings = run_local_quantum(qasm, shots)
         else:
             raw_results = send_to_quokka(
                 qasm,
                 my_quokka="quokka1",
                 count=shots
             )
-
             bitstrings = shots_to_bitstrings(raw_results)
             
         final_bitstring, counts = get_most_common_result(bitstrings)
