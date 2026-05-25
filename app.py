@@ -40,6 +40,7 @@ def generate_pd_qasm(player1, player2, use_quantum=True):
         raise ValueError("Choices must be C or D.")
 
     program = """OPENQASM 2.0;
+    include "qelib1.inc";
 qreg q[2];
 creg c[2];
 """
