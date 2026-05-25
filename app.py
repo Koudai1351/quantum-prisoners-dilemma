@@ -313,7 +313,7 @@ if st.button("Run Quantum Game"):
 
     st.subheader("Shot counts")
     st.write(dict(counts))
-    st.bar_chart(dict(counts))
+
 
     st.subheader("Generated QASM")
     st.code(qasm, language="text")
