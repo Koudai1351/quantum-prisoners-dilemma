@@ -2,6 +2,8 @@ import json
 import requests
 import urllib3
 from collections import Counter
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
 
 import streamlit as st
 
@@ -103,6 +105,28 @@ def send_to_quokka(program, my_quokka="quokka1", count=20):
     json_obj = json.loads(response.content)
     return json_obj["result"]["c"]
 
+def run_local_quantum(qasm, shots=20):
+    circuit = QuantumCircuit.from_qasm_str(qasm)
+
+    simulator = AerSimulator()
+
+    compiled_circuit = transpile(circuit, simulator)
+
+    result = simulator.run(
+        compiled_circuit,
+        shots=shots
+    ).result()
+
+    counts = result.get_counts()
+
+    expanded_results = []
+
+    for bitstring, count in counts.items():
+        for _ in range(count):
+            expanded_results.append(bitstring)
+
+    return expanded_results
+
 
 def shots_to_bitstrings(shots):
     bitstrings = []
@@ -122,9 +146,9 @@ def fallback_quantum_result(player1, player2):
     if player1 == "C" and player2 == "D":
         return "01"
     if player1 == "D" and player2 == "C":
-        return "01"
+        return "10"
     if player1 == "D" and player2 == "D":
-        return "00"
+        return "11"
     return "00"
 
 
@@ -199,9 +223,19 @@ with col4:
     )
 
 with col5:
-    quokka_device = st.selectbox(
-        "Quokka device",
-        ["quokka1", "quokka2", "quokka3"],
+    backend = st.selectbox(
+        "Quantum backend",
+        [
+            "Local Simulator",
+            "Quokka"
+        ],
+    )
+if backend == "Local Simulator":
+    st.success("Running on local Qiskit simulator.")
+
+else:
+    st.info(
+        "Quokka is an external quantum backend and may occasionally be unavailable."
     )
 
 allow_fallback = st.checkbox(
@@ -217,8 +251,19 @@ if st.button("Run Quantum Game"):
     used_fallback = False
 
     try:
-        raw_results = send_to_quokka(qasm, my_quokka=quokka_device, count=shots)
-        bitstrings = shots_to_bitstrings(raw_results)
+        if backend == "Local Simulator":
+
+        bitstrings = run_local_quantum(qasm, shots)
+
+        else:
+            raw_results = send_to_quokka(
+                qasm,
+                my_quokka="quokka1",
+                count=shots
+            )
+
+            bitstrings = shots_to_bitstrings(raw_results)
+            
         final_bitstring, counts = get_most_common_result(bitstrings)
 
     except Exception as e:
@@ -270,6 +315,7 @@ if st.button("Run Quantum Game"):
 
     st.subheader("Shot counts")
     st.write(dict(counts))
+    st.bar_chart(dict(counts))
 
     st.subheader("Generated QASM")
     st.code(qasm, language="text")
